@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as os from 'os'
 import * as vscode from 'vscode'
 import { inspect } from 'util'
 import { makeChildrenNodes } from '../../shared/treeview/utils'
@@ -12,6 +13,7 @@ import { AWSTreeNodeBase } from '../../shared/treeview/nodes/awsTreeNodeBase'
 import { AWSResourceNode } from '../../shared/treeview/nodes/awsResourceNode'
 import { DBInstanceNode } from './dbInstanceNode'
 import { PlaceholderNode } from '../../shared/treeview/nodes/placeholderNode'
+import { DBInstance, DocumentDBClient } from '../../shared/clients/docdbClient'
 
 /**
  * An AWS Explorer node representing DocumentDB clusters.
@@ -22,16 +24,23 @@ export class DBClusterNode extends AWSTreeNodeBase implements AWSResourceNode {
     name: string = this.cluster.DBClusterIdentifier ?? ''
     arn: string = this.cluster.DBClusterArn ?? ''
 
-    constructor(readonly cluster: DBCluster) {
+    constructor(readonly cluster: DBCluster, readonly client: DocumentDBClient) {
         super(cluster.DBClusterIdentifier ?? '[Cluster]', vscode.TreeItemCollapsibleState.Collapsed)
         this.contextValue = 'awsDocDBClusterNode'
+        this.tooltip = `${this.name}${os.EOL}Engine: ${this.cluster.EngineVersion}${os.EOL}Status: ${this.cluster.Status}`
     }
 
     public override async getChildren(): Promise<AWSTreeNodeBase[]> {
         return await makeChildrenNodes({
-            getChildNodes: () => {
-                const nodes = this.cluster.DBClusterMembers?.map(instance => new DBInstanceNode(instance))
-                return Promise.resolve(nodes ?? [])
+            getChildNodes: async () => {
+                const instances: DBInstance[] = (await this.client.listInstances([this.arn])).map(i => {
+                    const member = this.cluster.DBClusterMembers?.find(
+                        m => m.DBInstanceIdentifier === i.DBInstanceIdentifier
+                    )
+                    return { ...i, ...member }
+                })
+                const nodes = instances.map(instance => new DBInstanceNode(instance))
+                return nodes
             },
             getNoChildrenPlaceholderNode: async () =>
                 new PlaceholderNode(this, localize('AWS.explorerNode.docdb.noInstances', '[No Instances found]')),
