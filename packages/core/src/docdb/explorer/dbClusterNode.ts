@@ -8,19 +8,13 @@ import * as vscode from 'vscode'
 import { inspect } from 'util'
 import { makeChildrenNodes } from '../../shared/treeview/utils'
 import { localize } from '../../shared/utilities/vsCodeUtils'
-import { DBCluster } from '@aws-sdk/client-docdb'
+import { CreateDBInstanceMessage, DBCluster } from '@aws-sdk/client-docdb'
 import { AWSTreeNodeBase } from '../../shared/treeview/nodes/awsTreeNodeBase'
 import { AWSResourceNode } from '../../shared/treeview/nodes/awsResourceNode'
 import { DBInstanceNode } from './dbInstanceNode'
 import { PlaceholderNode } from '../../shared/treeview/nodes/placeholderNode'
 import { DBInstance, DocumentDBClient } from '../../shared/clients/docdbClient'
-import { DocumentDBNode } from './docdbNode'
-
-export const DBClusterRunningContext = 'DBClusterRunningNode'
-export const DBClusterStoppedContext = 'DBClusterStoppedNode'
-export const DBClusterPendingContext = 'DBClusterPendingNode'
-
-export type DBClusterNodeContext = 'DBClusterRunningNode' | 'DBClusterStoppedNode' | 'DBClusterPendingNode'
+import { DocDBContext, DocDBNodeContext, DocumentDBNode } from './docdbNode'
 
 /**
  * An AWS Explorer node representing DocumentDB clusters.
@@ -64,20 +58,24 @@ export class DBClusterNode extends AWSTreeNodeBase implements AWSResourceNode {
         })
     }
 
-    private getContext(): DBClusterNodeContext {
+    private getContext(): DocDBNodeContext {
         if (this.status === 'available') {
-            return DBClusterRunningContext
+            return DocDBContext.ClusterRunning
         } else if (this.status === 'stopped') {
-            return DBClusterStoppedContext
+            return DocDBContext.ClusterStopped
         }
-        return DBClusterPendingContext
+        return DocDBContext.Cluster
     }
 
     public getDescription(): string | boolean {
-        if (this.contextValue !== (DBClusterRunningContext as string)) {
+        if (this.contextValue !== (DocDBContext.ClusterRunning as string)) {
             return this.status!
         }
         return false
+    }
+
+    public async createInstance(request: CreateDBInstanceMessage): Promise<DBInstance | undefined> {
+        return await this.client.createInstance(request)
     }
 
     public get status(): string | undefined {
