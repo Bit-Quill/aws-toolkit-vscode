@@ -20,7 +20,7 @@ export class DBInstanceNode extends AWSTreeNodeBase {
 
     constructor(public readonly parent: DBClusterNode, readonly instance: DBInstance) {
         super(instance.DBInstanceIdentifier ?? '[Instance]', vscode.TreeItemCollapsibleState.None)
-        this.id = instance.DBInstanceIdentifier
+        this.id = instance.DBInstanceArn
         this.description = this.makeDescription()
         this.contextValue = this.getContext()
         this.tooltip = `${this.name}\nClass: ${this.instance.DBInstanceClass}\nStatus: ${this.status}`
