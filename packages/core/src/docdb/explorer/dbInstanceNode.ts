@@ -18,7 +18,10 @@ import { waitUntil } from '../../shared'
 export class DBInstanceNode extends AWSTreeNodeBase {
     public name: string = this.instance.DBInstanceIdentifier ?? ''
 
-    constructor(public readonly parent: DBClusterNode, readonly instance: DBInstance) {
+    constructor(
+        public readonly parent: DBClusterNode,
+        readonly instance: DBInstance
+    ) {
         super(instance.DBInstanceIdentifier ?? '[Instance]', vscode.TreeItemCollapsibleState.None)
         this.id = instance.DBInstanceArn
         this.description = this.makeDescription()
