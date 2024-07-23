@@ -302,4 +302,19 @@ export class DefaultDocumentDBClient {
             client.destroy()
         }
     }
+
+    public async listResourceTags(arn: string): Promise<DocDB.Tag[]> {
+        getLogger().debug('ListResourceTags called')
+        const client = await this.getClient()
+
+        try {
+            const command = new DocDB.ListTagsForResourceCommand({ ResourceName: arn })
+            const response = await client.send(command)
+            return response.TagList ?? []
+        } catch (e) {
+            throw ToolkitError.chain(e, 'Failed to get resource tags')
+        } finally {
+            client.destroy()
+        }
+    }
 }
