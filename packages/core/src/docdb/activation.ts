@@ -16,7 +16,8 @@ import { renameCluster } from './commands/renameCluster'
 import { renameInstance } from './commands/renameInstance'
 import { modifyInstance } from './commands/modifyInstance'
 import { rebootInstance } from './commands/rebootInstance'
-import { startCluster, stopCluster } from './commands/commands'
+import { listTags, startCluster, stopCluster } from './commands/commands'
+import { DBResourceNode } from './explorer/dbResourceNode'
 
 /**
  * Activates DocumentDB components.
@@ -62,6 +63,10 @@ export async function activate(ctx: ExtContext): Promise<void> {
 
         Commands.register('aws.docdb.rebootInstance', async (node: DBInstanceNode) => {
             await rebootInstance(node)
+        }),
+
+        Commands.register('aws.docdb.listTags', async (node: DBResourceNode) => {
+            await listTags(node)
         })
     )
 }
