@@ -5,6 +5,7 @@
 
 import { Commands } from '../shared'
 import { ExtContext } from '../shared/extensions'
+import { DBResourceNode } from './explorer/dbResourceNode'
 import { DocumentDBNode } from './explorer/docdbNode'
 import { DBClusterNode } from './explorer/dbClusterNode'
 import { DBInstanceNode } from './explorer/dbInstanceNode'
@@ -16,8 +17,8 @@ import { renameCluster } from './commands/renameCluster'
 import { renameInstance } from './commands/renameInstance'
 import { modifyInstance } from './commands/modifyInstance'
 import { rebootInstance } from './commands/rebootInstance'
-import { listTags, startCluster, stopCluster } from './commands/commands'
-import { DBResourceNode } from './explorer/dbResourceNode'
+import { startCluster, stopCluster } from './commands/commands'
+import { addTag, listTags, removeTag } from './commands/tagCommands'
 
 /**
  * Activates DocumentDB components.
@@ -67,6 +68,14 @@ export async function activate(ctx: ExtContext): Promise<void> {
 
         Commands.register('aws.docdb.listTags', async (node: DBResourceNode) => {
             await listTags(node)
+        }),
+
+        Commands.register('aws.docdb.addTag', async (node: DBResourceNode) => {
+            await addTag(node)
+        }),
+
+        Commands.register('aws.docdb.removeTag', async (node: DBResourceNode) => {
+            await removeTag(node)
         })
     )
 }

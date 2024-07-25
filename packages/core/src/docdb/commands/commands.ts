@@ -8,7 +8,6 @@ import { getLogger } from '../../shared/logger'
 import { telemetry } from '../../shared/telemetry'
 import { localize } from '../../shared/utilities/vsCodeUtils'
 import { DBClusterNode } from '../explorer/dbClusterNode'
-import { DBResourceNode } from '../explorer/dbResourceNode'
 
 export function startCluster(node?: DBClusterNode): Promise<void> {
     return telemetry.docdb_startCluster.run(async () => {
@@ -34,10 +33,4 @@ export function stopCluster(node?: DBClusterNode): Promise<void> {
             node?.parent.refresh()
         }
     })
-}
-
-export async function listTags(node: DBResourceNode): Promise<void> {
-    const tags = await node.listTags()
-    const detail = tags.length ? tags.map((tag) => `${tag.Key} = ${tag.Value}`).join('\n') : '[No tags assigned]'
-    void vscode.window.showInformationMessage(`Tags for: ${node.name}`, { modal: true, detail })
 }
