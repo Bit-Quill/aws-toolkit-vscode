@@ -87,7 +87,7 @@ export class DBInstanceNode extends DBResourceNode {
     }
 
     override copyEndpoint() {
-        return copyToClipboard(this.instance.Endpoint!.Address!, this.name)
+        return copyToClipboard(this.instance.Endpoint?.Address ?? '', this.name)
     }
 
     public [inspect.custom](): string {
