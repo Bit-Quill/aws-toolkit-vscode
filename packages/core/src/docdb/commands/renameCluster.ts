@@ -4,11 +4,12 @@
  */
 
 import * as vscode from 'vscode'
-import { getLogger, ToolkitError } from '../../shared'
+import { getLogger, sleep, ToolkitError } from '../../shared'
 import { localize } from '../../shared/utilities/vsCodeUtils'
 import { showViewLogsMessage } from '../../shared/utilities/messages'
 import { validateClusterName } from '../utils'
 import { DBClusterNode } from '../explorer/dbClusterNode'
+import { DBGlobalClusterNode } from '../explorer/dbGlobalClusterNode'
 import { telemetry } from '../../shared/telemetry'
 
 /**
@@ -18,7 +19,7 @@ import { telemetry } from '../../shared/telemetry'
  * Updates the cluster.
  * Refreshes the node.
  */
-export async function renameCluster(node: DBClusterNode) {
+export async function renameCluster(node: DBClusterNode | DBGlobalClusterNode) {
     getLogger().debug('RenameCluster called for: %O', node)
 
     await telemetry.docdb_renameCluster.run(async () => {
@@ -26,7 +27,7 @@ export async function renameCluster(node: DBClusterNode) {
             throw new ToolkitError('No node specified for RenameCluster')
         }
 
-        const clusterName = node.cluster.DBClusterIdentifier
+        const clusterName = node.name
 
         if (node.cluster.Status !== 'available') {
             void vscode.window.showErrorMessage(
@@ -54,7 +55,6 @@ export async function renameCluster(node: DBClusterNode) {
                 localize('AWS.docdb.renameCluster.success', 'Updated cluster: {0}', clusterName)
             )
 
-            node.parent.refresh()
             return cluster
         } catch (e) {
             getLogger().error(`Failed to rename cluster ${clusterName}: %s`, e)
