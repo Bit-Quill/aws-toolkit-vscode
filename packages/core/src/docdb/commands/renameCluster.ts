@@ -55,7 +55,7 @@ export async function renameCluster(node: DBClusterNode | DBGlobalClusterNode) {
                 localize('AWS.docdb.renameCluster.success', 'Updated cluster: {0}', clusterName)
             )
 
-            await sleep(1000)
+            await sleep(1000) // wait for server to update status
             node.parent.refresh()
             return cluster
         } catch (e) {
