@@ -30,6 +30,7 @@ function getRegionFromArn(arn: string) {
 export class DBGlobalClusterNode extends DBResourceNode {
     override name = this.cluster.GlobalClusterIdentifier!
     override arn = this.cluster.GlobalClusterArn!
+    readonly clusterRole: DBClusterRole = 'global'
 
     constructor(
         public readonly parent: AWSTreeNodeBase,
