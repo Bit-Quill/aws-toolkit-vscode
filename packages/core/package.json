@@ -2021,12 +2021,12 @@
                 },
                 {
                     "command": "aws.docdb.deleteCluster",
-                    "when": "viewItem =~ /^awsDocDB-cluster/",
+                    "when": "viewItem =~ /^awsDocDB-cluster-(regional|elastic)/",
                     "group": "0@4"
                 },
                 {
                     "command": "aws.docdb.createInstance",
-                    "when": "viewItem =~ /^awsDocDB-cluster-(?!.*elastic.*)(?!-stopped)/"
+                    "when": "viewItem =~ /^awsDocDB-cluster-(?!elastic|global)(?!-stopped)/"
                 },
                 {
                     "command": "aws.docdb.renameInstance",
@@ -2050,7 +2050,7 @@
                 },
                 {
                     "command": "aws.docdb.listTags",
-                    "when": "viewItem =~ /^awsDocDB-/"
+                    "when": "viewItem =~ /^awsDocDB-(?!cluster-global).*/"
                 },
                 {
                     "command": "aws.docdb.openBrowser",
