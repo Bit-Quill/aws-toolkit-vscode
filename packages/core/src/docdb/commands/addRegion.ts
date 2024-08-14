@@ -27,6 +27,11 @@ export async function addRegion(node: DBClusterNode | DBGlobalClusterNode): Prom
     return telemetry.docdb_addRegion.run(async () => {
         let globalClusterName = undefined
 
+        if (node.cluster.StorageEncrypted) {
+            void vscode.window.showErrorMessage('Currently supported for unencrypted clusters only.')
+            return
+        }
+
         if (node instanceof DBClusterNode) {
             if (node.clusterRole !== 'regional') {
                 void vscode.window.showErrorMessage('Currently supported for standalone clusters only.')
