@@ -19,7 +19,7 @@ import { telemetry } from '../../shared/telemetry'
  * Refreshes the node.
  */
 export async function renameInstance(node: DBInstanceNode) {
-    getLogger().debug('RenameInstance called for: %O', node)
+    getLogger().debug('docdb:RenameInstance called for: %O', node)
 
     await telemetry.docdb_renameInstance.run(async () => {
         if (!node) {
@@ -42,14 +42,14 @@ export async function renameInstance(node: DBInstanceNode) {
         })
 
         if (!newInstanceName) {
-            getLogger().info('RenameInstance cancelled')
+            getLogger().info('docdb:RenameInstance cancelled')
             throw new ToolkitError('User cancelled', { cancelled: true })
         }
 
         try {
             const instance = await node.renameInstance(newInstanceName)
 
-            getLogger().info('Renamed instance: %O', instance)
+            getLogger().info('docdb:Renamed instance: %O', instance)
             void vscode.window.showInformationMessage(
                 localize('AWS.docdb.renameInstance.success', 'Updated instance: {0}', instanceName)
             )
@@ -57,7 +57,7 @@ export async function renameInstance(node: DBInstanceNode) {
             node.refresh()
             return instance
         } catch (e) {
-            getLogger().error(`Failed to rename instance ${instanceName}: %s`, e)
+            getLogger().error(`docdb:Failed to rename instance ${instanceName}: %s`, e)
             void showViewLogsMessage(
                 localize('AWS.docdb.renameInstance.error', 'Failed to rename instance: {0}', instanceName)
             )

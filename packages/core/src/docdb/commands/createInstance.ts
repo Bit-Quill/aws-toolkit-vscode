@@ -22,7 +22,7 @@ const MaxInstanceCount = 16
  * Refreshes the cluster node.
  */
 export async function createInstance(node: DBClusterNode) {
-    getLogger().debug('CreateInstance called for: %O', node)
+    getLogger().debug('docdb:CreateInstance called for: %O', node)
 
     await telemetry.docdb_createInstance.run(async () => {
         if (!node) {
@@ -34,7 +34,7 @@ export async function createInstance(node: DBClusterNode) {
             void vscode.window.showInformationMessage(
                 localize('AWS.docdb.createInstance.limitReached', 'Max instances in use')
             )
-            throw new ToolkitError('Max instances in use')
+            throw new ToolkitError('Max instances in use', { code: 'documentDBMaxInstancesInUse' })
         }
 
         const generateInstanceName = (clusterName: string) =>
@@ -51,8 +51,8 @@ export async function createInstance(node: DBClusterNode) {
         const result = await wizard.run()
 
         if (!result) {
-            getLogger().info('CreateInstance cancelled')
-            throw new ToolkitError('User cancelled wizard', { cancelled: true })
+            getLogger().debug('docdb:CreateInstance cancelled')
+            throw new ToolkitError('User cancelled createInstance wizard', { cancelled: true })
         }
 
         if (result.DBInstanceIdentifier === '') {
@@ -64,7 +64,7 @@ export async function createInstance(node: DBClusterNode) {
         }
 
         const instanceName = result.DBInstanceIdentifier
-        getLogger().info(`Creating instance: ${instanceName}`)
+        getLogger().info(`docdb:Creating instance: ${instanceName}`)
 
         try {
             const request: CreateDBInstanceMessage = {
@@ -76,7 +76,7 @@ export async function createInstance(node: DBClusterNode) {
 
             const instance = await node.createInstance(request)
 
-            getLogger().info('Created instance: %O', instance)
+            getLogger().info('docdb:Created instance: %O', instance)
             void vscode.window.showInformationMessage(
                 localize('AWS.docdb.createInstance.success', 'Creating instance: {0}', instanceName)
             )
@@ -84,7 +84,7 @@ export async function createInstance(node: DBClusterNode) {
             node.refresh()
             return instance
         } catch (e) {
-            getLogger().error(`Failed to create instance ${instanceName}: %s`, e)
+            getLogger().error(`docdb:Failed to create instance ${instanceName}: %s`, e)
             void showViewLogsMessage(
                 localize('AWS.docdb.createInstance.error', 'Failed to create instance: {0}', instanceName)
             )

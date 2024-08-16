@@ -21,7 +21,7 @@ import { DocumentDBClient } from '../../shared/clients/docdbClient'
  * Refreshes the node.
  */
 export async function createCluster(node?: DocumentDBNode) {
-    getLogger().debug('CreateCluster called for: %O', node)
+    getLogger().debug('docdb:CreateCluster called for: %O', node)
 
     await telemetry.docdb_createCluster.run(async (span) => {
         if (!node) {
@@ -33,12 +33,12 @@ export async function createCluster(node?: DocumentDBNode) {
         const result = await wizard.run()
 
         if (!result) {
-            getLogger().info('CreateCluster canceled')
-            throw new ToolkitError('User cancelled wizard', { cancelled: true })
+            getLogger().debug('docdb:createCluster cancelled')
+            throw new ToolkitError('User cancelled createCluster wizard', { cancelled: true })
         }
 
         const clusterName = result.RegionalCluster?.DBClusterIdentifier ?? result.ElasticCluster?.clusterName
-        getLogger().info(`Creating cluster: ${clusterName}`)
+        getLogger().info(`docdb:Creating cluster: ${clusterName}`)
         let cluster
 
         try {
@@ -58,7 +58,7 @@ export async function createCluster(node?: DocumentDBNode) {
                 }
             }
 
-            getLogger().info('Created cluster: %O', cluster)
+            getLogger().info('docdb:Created cluster: %O', cluster)
             void vscode.window.showInformationMessage(
                 localize('AWS.docdb.createCluster.success', 'Created cluster: {0}', clusterName)
             )
@@ -66,7 +66,7 @@ export async function createCluster(node?: DocumentDBNode) {
             node?.refresh()
             return cluster
         } catch (e) {
-            getLogger().error(`Failed to create cluster ${clusterName}: %s`, e)
+            getLogger().error(`docdb:Failed to create cluster ${clusterName}: %s`, e)
             void showViewLogsMessage(
                 localize('AWS.docdb.createCluster.error', 'Failed to create cluster: {0}', clusterName)
             )
@@ -98,7 +98,7 @@ export async function createInstancesForCluster(
         await Promise.all(tasks)
     } catch (e) {
         throw ToolkitError.chain(e, `Failed to create instance for cluster ${clusterName}`, {
-            code: 'FailureCreatingInstanceForCluster',
+            code: 'docdbCreateInstanceForCluster',
         })
     }
 }

@@ -23,7 +23,7 @@ import { telemetry } from '../../shared/telemetry'
  * Refreshes the node.
  */
 export async function modifyInstance(node: DBInstanceNode) {
-    getLogger().debug('ModifyInstance called for: %O', node)
+    getLogger().debug('docdb:ModifyInstance called for: %O', node)
 
     await telemetry.docdb_resizeInstance.run(async () => {
         if (!node) {
@@ -44,7 +44,7 @@ export async function modifyInstance(node: DBInstanceNode) {
         const newInstanceClass = await promptForInstanceClass(quickPickItems, node.instance.DBInstanceClass!)
 
         if (!newInstanceClass) {
-            getLogger().info('ModifyInstance cancelled')
+            getLogger().info('docdb:ModifyInstance cancelled')
             throw new ToolkitError('User cancelled wizard', { cancelled: true })
         }
 
@@ -57,7 +57,7 @@ export async function modifyInstance(node: DBInstanceNode) {
 
             const instance = await parent.client.modifyInstance(request)
 
-            getLogger().info('Modified instance: %O', instanceName)
+            getLogger().info('docdb:Modified instance: %O', instanceName)
             void vscode.window.showInformationMessage(
                 localize('AWS.docdb.modifyInstance.success', 'Modified instance: {0}', instanceName)
             )
@@ -66,7 +66,7 @@ export async function modifyInstance(node: DBInstanceNode) {
             parent.refresh()
             return instance
         } catch (e) {
-            getLogger().error(`Failed to modify instance ${instanceName}: %s`, e)
+            getLogger().error(`docdb:Failed to modify instance ${instanceName}: %s`, e)
             void showViewLogsMessage(
                 localize('AWS.docdb.modifyInstance.error', 'Failed to modify instance: {0}', instanceName)
             )
