@@ -11,13 +11,13 @@ import { InterfaceNoSymbol } from '../utilities/tsUtils'
 import * as DocDB from '@aws-sdk/client-docdb'
 import * as DocDBElastic from '@aws-sdk/client-docdb-elastic'
 
-const DocDBEngine = 'docdb'
-
 function isElasticCluster(clusterId: string | undefined): boolean | undefined {
     return clusterId?.includes(':docdb-elastic:')
 }
 
+export const DocDBEngine = 'docdb'
 export const DBStorageType = { Standard: 'standard', IOpt1: 'iopt1' } as const
+export const MaxInstanceCount = 16
 
 /** A list of Amazon DocumentDB clusters. */
 export type DBElasticCluster = DocDBElastic.Cluster & DocDBElastic.ClusterInList

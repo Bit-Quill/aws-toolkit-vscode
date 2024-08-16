@@ -11,8 +11,7 @@ import { showViewLogsMessage } from '../../shared/utilities/messages'
 import { DBClusterNode } from '../explorer/dbClusterNode'
 import { CreateInstanceWizard } from '../wizards/createInstanceWizard'
 import { CreateDBInstanceMessage } from '@aws-sdk/client-docdb'
-
-const MaxInstanceCount = 16
+import { DocDBEngine, MaxInstanceCount } from '../../shared/clients/docdbClient'
 
 /**
  * Creates a DocumentDB instance.
@@ -68,7 +67,7 @@ export async function createInstance(node: DBClusterNode) {
 
         try {
             const request: CreateDBInstanceMessage = {
-                Engine: 'docdb',
+                Engine: DocDBEngine,
                 DBClusterIdentifier: node.cluster.DBClusterIdentifier,
                 DBInstanceIdentifier: result.DBInstanceIdentifier,
                 DBInstanceClass: result.DBInstanceClass,

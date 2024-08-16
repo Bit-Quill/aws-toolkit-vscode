@@ -11,7 +11,7 @@ import { showViewLogsMessage } from '../../shared/utilities/messages'
 import { DocumentDBNode } from '../explorer/docdbNode'
 import { CreateClusterWizard } from '../wizards/createClusterWizard'
 import { CreateClusterInput } from '@aws-sdk/client-docdb-elastic'
-import { DocumentDBClient } from '../../shared/clients/docdbClient'
+import { DocDBEngine, DocumentDBClient } from '../../shared/clients/docdbClient'
 
 /**
  * Creates a DocumentDB cluster.
@@ -86,7 +86,7 @@ export async function createInstancesForCluster(
     for (let index = 0; index < instanceCount; index++) {
         tasks.push(
             client.createInstance({
-                Engine: 'docdb',
+                Engine: DocDBEngine,
                 DBClusterIdentifier: clusterName,
                 DBInstanceIdentifier: index === 0 ? clusterName : `${clusterName}${index + 1}`,
                 DBInstanceClass: instanceClass,
