@@ -7,7 +7,6 @@ import * as vscode from 'vscode'
 import { getLogger, ToolkitError } from '../../shared'
 import { localize } from '../../shared/utilities/vsCodeUtils'
 import { showViewLogsMessage } from '../../shared/utilities/messages'
-import { DBClusterNode } from '../explorer/dbClusterNode'
 import { DBInstanceNode } from '../explorer/dbInstanceNode'
 import { DBCluster, ModifyDBInstanceMessage } from '@aws-sdk/client-docdb'
 import { DBStorageType, DocumentDBClient } from '../../shared/clients/docdbClient'
@@ -38,7 +37,7 @@ export async function modifyInstance(node: DBInstanceNode) {
         }
 
         const instanceName = node.instance.DBInstanceIdentifier
-        const parent = node.parent as DBClusterNode
+        const parent = node.parent
 
         const quickPickItems = await getInstanceClassOptions(parent.client, parent.cluster)
         const newInstanceClass = await promptForInstanceClass(quickPickItems, node.instance.DBInstanceClass!)
