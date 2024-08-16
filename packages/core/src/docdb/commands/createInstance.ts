@@ -41,7 +41,7 @@ export async function createInstance(node: DBClusterNode) {
 
         const options = {
             implicitState: {
-                DBInstanceIdentifier: generateInstanceName(node.cluster.DBClusterIdentifier!),
+                DBInstanceIdentifier: generateInstanceName(node.cluster.DBClusterIdentifier ?? ''),
                 DBInstanceClass: instances[0]?.DBInstanceClass,
             },
         }
@@ -54,14 +54,6 @@ export async function createInstance(node: DBClusterNode) {
             throw new ToolkitError('User cancelled createInstance wizard', { cancelled: true })
         }
 
-        if (result.DBInstanceIdentifier === '') {
-            result.DBInstanceIdentifier = undefined!
-        }
-
-        if (result.DBInstanceClass === '') {
-            result.DBInstanceClass = undefined!
-        }
-
         const instanceName = result.DBInstanceIdentifier
         getLogger().info(`docdb:Creating instance: ${instanceName}`)
 
@@ -70,7 +62,7 @@ export async function createInstance(node: DBClusterNode) {
                 Engine: DocDBEngine,
                 DBClusterIdentifier: node.cluster.DBClusterIdentifier,
                 DBInstanceIdentifier: result.DBInstanceIdentifier,
-                DBInstanceClass: result.DBInstanceClass,
+                DBInstanceClass: result.DBInstanceClass !== '' ? result.DBInstanceClass : undefined,
             }
 
             const instance = await node.createInstance(request)

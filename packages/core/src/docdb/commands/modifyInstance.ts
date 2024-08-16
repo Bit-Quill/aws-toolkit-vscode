@@ -40,7 +40,7 @@ export async function modifyInstance(node: DBInstanceNode) {
         const parent = node.parent
 
         const quickPickItems = await getInstanceClassOptions(parent.client, parent.cluster)
-        const newInstanceClass = await promptForInstanceClass(quickPickItems, node.instance.DBInstanceClass!)
+        const newInstanceClass = await promptForInstanceClass(quickPickItems, node.instance.DBInstanceClass ?? '')
 
         if (!newInstanceClass) {
             getLogger().debug('docdb:ModifyInstance cancelled')

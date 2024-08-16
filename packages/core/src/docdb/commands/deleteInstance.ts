@@ -28,7 +28,7 @@ export async function deleteInstance(node: DBInstanceNode) {
 
         const parent = node.parent as DBClusterNode
         const client = parent.client
-        const instanceName = node.instance.DBInstanceIdentifier!
+        const instanceName = node.instance.DBInstanceIdentifier ?? ''
 
         if (node.instance.DBInstanceStatus !== 'available') {
             void vscode.window.showErrorMessage(
