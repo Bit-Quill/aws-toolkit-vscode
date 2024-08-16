@@ -80,8 +80,7 @@ export async function deleteCluster(node: DBClusterNode | DBElasticClusterNode) 
 
             let finalSnapshotId: string | undefined = undefined
             if (takeSnapshot) {
-                const timestamp = `${formatDate()}-${formatTime()}`
-                finalSnapshotId = `${clusterName}-${timestamp}`
+                finalSnapshotId = `${clusterName}-${formatDate()}-${formatTime()}`
             }
 
             const cluster = await node.deleteCluster(finalSnapshotId)
