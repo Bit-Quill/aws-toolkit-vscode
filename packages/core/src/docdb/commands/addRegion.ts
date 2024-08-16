@@ -60,7 +60,10 @@ export async function addRegion(node: DBClusterNode | DBGlobalClusterNode): Prom
                         unsupportedInstanceFound.DBInstanceClass
                     )
                 )
-                throw new ToolkitError('Instance class not supported for global cluster', { cancelled: true })
+                throw new ToolkitError('Instance class not supported for global cluster', {
+                    cancelled: true,
+                    code: 'docdbInstanceClassNotSupported',
+                })
             }
         } else {
             globalClusterName = node.cluster.GlobalClusterIdentifier
@@ -69,7 +72,10 @@ export async function addRegion(node: DBClusterNode | DBGlobalClusterNode): Prom
                 void vscode.window.showErrorMessage(
                     localize('AWS.docdb.addRegion.maxRegions', 'Global clusters can have a maximum of 5 regions')
                 )
-                throw new ToolkitError('Global clusters can have a maximum of 5 regions', { cancelled: true })
+                throw new ToolkitError('Global clusters can have a maximum of 5 regions', {
+                    cancelled: true,
+                    code: 'docdbMaxRegionsInUse',
+                })
             }
         }
 
@@ -77,7 +83,7 @@ export async function addRegion(node: DBClusterNode | DBGlobalClusterNode): Prom
             void vscode.window.showErrorMessage(
                 localize('AWS.docdb.deleteCluster.clusterStopped', 'Cluster must be running')
             )
-            throw new ToolkitError('Cluster not available', { cancelled: true })
+            throw new ToolkitError('Cluster not available', { cancelled: true, code: 'docdbClusterStopped' })
         }
 
         const wizard = new CreateGlobalClusterWizard(node.regionCode, node.cluster.EngineVersion, node.client, {

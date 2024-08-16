@@ -34,7 +34,7 @@ export async function deleteInstance(node: DBInstanceNode) {
             void vscode.window.showErrorMessage(
                 localize('AWS.docdb.deleteInstance.instanceStopped', 'Instance must be running')
             )
-            throw new ToolkitError('Instance not running', { cancelled: true })
+            throw new ToolkitError('Instance not running', { cancelled: true, code: 'docdbInstanceNotAvailable' })
         }
 
         if (parent?.status !== 'available') {
@@ -46,8 +46,8 @@ export async function deleteInstance(node: DBInstanceNode) {
 
         const isConfirmed = await showConfirmationDialog(instanceName)
         if (!isConfirmed) {
-            getLogger().info('docdb:DeleteInstance cancelled')
-            throw new ToolkitError('User cancelled', { cancelled: true })
+            getLogger().debug('docdb:DeleteInstance cancelled')
+            throw new ToolkitError('User cancelled deleteInstance', { cancelled: true })
         }
 
         try {

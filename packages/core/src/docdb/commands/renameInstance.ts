@@ -32,7 +32,7 @@ export async function renameInstance(node: DBInstanceNode) {
             void vscode.window.showErrorMessage(
                 localize('AWS.docdb.deleteInstance.instanceStopped', 'Instance must be running')
             )
-            throw new ToolkitError('Instance not available', { cancelled: true })
+            throw new ToolkitError('Instance not available', { cancelled: true, code: 'docdbInstanceNotAvailable' })
         }
 
         const newInstanceName = await vscode.window.showInputBox({
@@ -42,8 +42,8 @@ export async function renameInstance(node: DBInstanceNode) {
         })
 
         if (!newInstanceName) {
-            getLogger().info('docdb:RenameInstance cancelled')
-            throw new ToolkitError('User cancelled', { cancelled: true })
+            getLogger().debug('docdb:RenameInstance cancelled')
+            throw new ToolkitError('User cancelled renameInstance', { cancelled: true })
         }
 
         try {

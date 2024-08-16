@@ -28,7 +28,7 @@ export async function rebootInstance(node: DBInstanceNode) {
             void vscode.window.showErrorMessage(
                 localize('AWS.docdb.deleteInstance.instanceStopped', 'Instance must be running')
             )
-            throw new ToolkitError('Instance not available', { cancelled: true })
+            throw new ToolkitError('Instance not available', { cancelled: true, code: 'docdbInstanceNotAvailable' })
         }
 
         const isConfirmed = await showConfirmationMessage({
@@ -41,7 +41,7 @@ export async function rebootInstance(node: DBInstanceNode) {
             cancel: localizedText.cancel,
         })
         if (!isConfirmed) {
-            getLogger().info('docdb:RebootInstance canceled')
+            getLogger().debug('docdb:RebootInstance canceled')
             throw new CancellationError('user')
         }
 

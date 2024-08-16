@@ -33,7 +33,7 @@ export async function renameCluster(node: DBClusterNode | DBGlobalClusterNode) {
             void vscode.window.showErrorMessage(
                 localize('AWS.docdb.deleteCluster.clusterStopped', 'Cluster must be running')
             )
-            throw new ToolkitError('Cluster not available', { cancelled: true })
+            throw new ToolkitError('Cluster not available', { cancelled: true, code: 'docdbClusterStopped' })
         }
 
         const newClusterName = await vscode.window.showInputBox({
@@ -43,8 +43,8 @@ export async function renameCluster(node: DBClusterNode | DBGlobalClusterNode) {
         })
 
         if (!newClusterName) {
-            getLogger().info('docdb:RenameCluster cancelled')
-            throw new ToolkitError('User cancelled', { cancelled: true })
+            getLogger().debug('docdb:RenameCluster cancelled')
+            throw new ToolkitError('User cancelled renameCluster', { cancelled: true })
         }
 
         try {

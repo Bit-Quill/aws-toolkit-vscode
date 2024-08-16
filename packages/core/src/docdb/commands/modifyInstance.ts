@@ -34,7 +34,7 @@ export async function modifyInstance(node: DBInstanceNode) {
             void vscode.window.showErrorMessage(
                 localize('AWS.docdb.modifyInstance.instanceStopped', 'Instance must be running')
             )
-            throw new ToolkitError('Instance not available', { cancelled: true })
+            throw new ToolkitError('Instance not available', { cancelled: true, code: 'docdbInstanceNotAvailable' })
         }
 
         const instanceName = node.instance.DBInstanceIdentifier
@@ -44,8 +44,8 @@ export async function modifyInstance(node: DBInstanceNode) {
         const newInstanceClass = await promptForInstanceClass(quickPickItems, node.instance.DBInstanceClass!)
 
         if (!newInstanceClass) {
-            getLogger().info('docdb:ModifyInstance cancelled')
-            throw new ToolkitError('User cancelled wizard', { cancelled: true })
+            getLogger().debug('docdb:ModifyInstance cancelled')
+            throw new ToolkitError('User cancelled modifyInstance wizard', { cancelled: true })
         }
 
         try {
