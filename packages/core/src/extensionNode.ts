@@ -17,7 +17,6 @@ import { AwsContextCommands } from './shared/awsContextCommands'
 import {
     getIdeProperties,
     getExtEnvironmentDetails,
-    isCloud9,
     isSageMaker,
     showWelcomeMessage,
 } from './shared/extensionUtilities'
@@ -38,6 +37,7 @@ import { activate as activateDev } from './dev/activation'
 import * as beta from './dev/beta'
 import { activate as activateApplicationComposer } from './applicationcomposer/activation'
 import { activate as activateRedshift } from './awsService/redshift/activation'
+import { activate as activateDocumentDb } from './docdb/activation'
 import { activate as activateIamPolicyChecks } from './awsService/accessanalyzer/activation'
 import { activate as activateNotifications } from './notifications/activation'
 import { SchemaService } from './shared/schemas'
@@ -182,25 +182,25 @@ export async function activate(context: vscode.ExtensionContext) {
 
         await activateSchemas(extContext)
 
-        if (!isCloud9()) {
-            if (!isSageMaker()) {
-                // Amazon Q/CodeWhisperer Tree setup.
-                learnMoreAmazonQCommand.register()
-                qExtensionPageCommand.register()
-                dismissQTree.register()
-                installAmazonQExtension.register()
+        if (!isSageMaker()) {
+            // Amazon Q Tree setup.
+            learnMoreAmazonQCommand.register()
+            qExtensionPageCommand.register()
+            dismissQTree.register()
+            installAmazonQExtension.register()
 
-                await handleAmazonQInstall()
-            }
-            await activateApplicationComposer(context)
-            await activateThreatComposerEditor(context)
+            await handleAmazonQInstall()
         }
+        await activateApplicationComposer(context)
+        await activateThreatComposerEditor(context)
 
         await activateStepFunctions(context, globals.awsContext, globals.outputChannel)
 
         await activateRedshift(extContext)
 
         await activateAppBuilder(extContext)
+
+        await activateDocumentDb(extContext)
 
         await activateIamPolicyChecks(extContext)
 
